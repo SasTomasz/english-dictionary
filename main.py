@@ -13,14 +13,17 @@ def index():
 
 @app.route("/dictionary/v1/<word>")
 def translate(word):
-    r = requests.get(f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}").json()
+    try:
+        r = requests.get(f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}").json()
+    except requests.exceptions.RequestException as error:
+        return "There is a problem with Your internet connection. Check it and try again"
+
     try:
         definition = r[0]['meanings'][0]["definitions"][0]["definition"]
         return {"word": word,
                 "definition": definition}
     except (KeyError, TypeError) as error:
-        # TODO: Show more info in error message
-        logger.error(error)
+        logger.exception("Error occurred when trying get word definition from response")
         return "Sorry we don't find Your word, try another one"
 
 
