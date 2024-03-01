@@ -16,6 +16,7 @@ def translate(word):
     try:
         r = requests.get(f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}").json()
     except requests.exceptions.RequestException as error:
+        logger.exception(error)
         return "There is a problem with Your internet connection. Check it and try again"
 
     try:
@@ -24,6 +25,7 @@ def translate(word):
                 "definition": definition}
     except (KeyError, TypeError) as error:
         logger.exception("Error occurred when trying get word definition from response")
+        logger.exception(error)
         return "Sorry we don't find Your word, try another one"
 
 
